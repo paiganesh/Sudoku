@@ -4,18 +4,25 @@ Finds all possible solution of a Sudoku problem
 Developed By: Ganesh Pai
 """
 import numpy as np
+import time
 
 class Sudoku:
     solutionList = []
+
     def __init__(self, table):
         self.grid = table.copy()
         self.zeroList = []
+        start = time.time()
         self.__solveSudoku__()
+        end = time.time()
+        self.computationTime = end - start
+
+    def getComputationTime(self):
+        return str(self.computationTime) + "s"
 
     def __solveSudoku__(self):
         self.__fillZeroList__(self.grid)
         self.__solveSingulars__(self.grid, self.zeroList)  #zeroList is updated and stops at end/at conflict
-
         if len(self.zeroList) == 0: #if no conflict and reached end
             Sudoku.solutionList.append(self.grid.copy())
         else:                       #if conflict occured
@@ -27,16 +34,14 @@ class Sudoku:
                 if grid[x, y] == 0:
                     self.zeroList.append((x, y))
 
-    def __getPossibleCellValues__(self, grid, x, y):
-        x_ = x // 3 * 3;    y_ = y // 3 * 3
-        return sorted(list(set(range(1,10)) - (set(grid[x, 0:9]) | set(grid[0:9, y]) | set(grid[x_:x_+3, y_:y_+3].flatten())) - {0}))
+    __getPossibleCellValues__ = lambda grid, x, y: list({1,2,3,4,5,6,7,8,9} - (set(grid[x]) | set(grid[:, y]) | set(grid[x // 3 * 3:x // 3 * 3+3, y // 3 * 3:y // 3 * 3+3].flatten())))
 
     def __solveSingulars__(self, grid, zeroList):
         updated = True
         while len(zeroList) > 0 and updated:
             updated = False
             for x, y in zeroList:
-                possible = self.__getPossibleCellValues__(grid, x, y)
+                possible = Sudoku.__getPossibleCellValues__(grid, x, y)
                 if len(possible) == 1:
                     grid[x, y] = np.int(possible.pop())
                     zeroList.remove((x, y))
@@ -47,7 +52,7 @@ class Sudoku:
             grid_ = grid.copy()     #take backup
             x, y = zeroList.pop(0)
             zeroList_ = zeroList.copy()
-            for val in self.__getPossibleCellValues__(grid, x, y):
+            for val in Sudoku.__getPossibleCellValues__(grid, x, y):
                 grid_[x, y] = val
                 self.__solveSingulars__(grid_, zeroList_)
                 self.__solveConflicts__(grid_.copy(), zeroList_.copy())
@@ -81,17 +86,18 @@ class Sudoku:
 
 
 if __name__ == "__main__":
-    table = [[4, 0, 0, 2, 3, 0, 0, 0, 0],
-              [0, 0, 0, 4, 0, 0, 0, 0, 0],
-              [7, 0, 9, 0, 0, 1, 0, 6, 4],
-
-              [0, 0, 3, 0, 0, 0, 0, 0, 2],
-              [8, 0, 0, 0, 6, 0, 0, 9, 0],
-              [2, 0, 0, 0, 4, 5, 8, 7, 0],
-
-              [0, 4, 0, 7, 0, 8, 0, 0, 3],
-              [0, 0, 0, 0, 9, 0, 0, 0, 1],
-              [0, 6, 0, 0, 0, 3, 0, 0, 0]]
-
+     table = [[4, 0, 0, 2, 3, 0, 0, 0, 0],
+               [0, 0, 0, 4, 0, 0, 0, 0, 0],
+               [7, 0, 9, 0, 0, 1, 0, 6, 4],
+    
+               [0, 0, 3, 0, 0, 0, 0, 0, 2],
+               [8, 0, 0, 0, 6, 0, 0, 9, 0],
+               [2, 0, 0, 0, 4, 5, 8, 7, 0],
+    
+               [0, 4, 0, 7, 0, 8, 0, 0, 3],
+               [0, 0, 0, 0, 9, 0, 0, 0, 1],
+               [0, 6, 0, 0, 0, 3, 0, 0, 0]]
+    
     s = Sudoku(np.array(table))
     print(s)
+    print("Time: ", s.getComputationTime())
