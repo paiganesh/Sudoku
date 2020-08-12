@@ -2,7 +2,7 @@
 Create an instance of Sudoku Class by passing the sudoku table as numpy.ndarray.<br>
 Printing the object displays all possible solutions as a formatted table.
 
-On [the hardest Sudoku in the world](http://www.telegraph.co.uk/news/science/science-news/9359579/Worlds-hardest-sudoku-can-you-crack-it.html) it takes ~40 seconds to solve on an i3 processor with 4GB RAM. 
+On the [World's hardest Sudoku](http://www.telegraph.co.uk/news/science/science-news/9359579/Worlds-hardest-sudoku-can-you-crack-it.html) it takes ~40 seconds to solve on an i3 processor with 4GB RAM. 
 
 Problem:<br>
 ```
